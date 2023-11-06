@@ -42,12 +42,14 @@ const bodyParser = require('body-parser');
 //     });
 // })
 
-// router.use(bodyParser.json());
+router.use(bodyParser.json());
 
 router.post('/login', (req, res) => {
-    const {id, password} = req.body; // Assuming the client sends id and password in the request body  
+  const id=req.body.user_id;
+  const password=req.body.user_pass; 
+    // Assuming the client sends id and password in the request body  
     // Query the database to find a user with the provided id
-    con.query('SELECT * FROM users u join user_role r on u.role_id=r.role_id WHERE user_id = ? and user_pass=?', [id,password], (error, rows, fields) => {
+    con.query('SELECT * FROM users u join user_role r on u.role_id=r.role_id WHERE user_id = ? and user_pass=?', [id,password], (error, rows) => {
       if (error) {
         console.log(error);
         return res.status(500).json({ status: 'Internal server error' });
@@ -61,7 +63,7 @@ router.post('/login', (req, res) => {
       const user = rows[0];
   
       // Check if the provided password matches the stored password (you should use a secure hash)
-      if (password !== user.password) {
+      if (password !== user.user_pass) {
         return res.status(401).json({ status: 'Invalid password' });
       }
   
